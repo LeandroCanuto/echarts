@@ -3,36 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECharts Demo</title>
+    <title>Monitoramento do risco legal</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        console.log("jQuery is working!");
-        
-        // Adiciona um evento de clique ao botão
-        $("#changeTextButton").click(function() {
-            $("#textToChange").text("O texto foi alterado!");
-        });
-    });
-    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: #0057A0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin: 20px 15px;
+        }
+        .header img {
+            margin-right: 10px;
+        }
+        .tabs-container {
+            border: 2px solid #000;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            width: 80%;
+            margin: 0 auto;
+        }
+        .tabs {
+            display: flex;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .tabs div {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+            border-radius: 10px;
+        }
+        .tab {
+            display: none;
+        }
+        .tab.active {
+            display: block;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
 </head>
 <body>
-    <h1>ECharts Demo</h1>
-    <div id="chart" style="width: 600px; height: 400px;"></div>
-    
-    <!-- Elemento de texto que será alterado -->
-    <p id="textToChange">Este texto será alterado ao clicar no botão.</p>
-    
-    <!-- Botão para alterar o texto -->
-    <button id="changeTextButton">Clique para alterar o texto</button>
-    
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        var chartData = /*[[${chartData}]]*/ '{}';
-        var chart = echarts.init(document.getElementById('chart'));
-        chart.setOption(JSON.parse(chartData));
-        /*]]>*/
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Banco_do_Brasil_logo.svg/1200px-Banco_do_Brasil_logo.svg.png" alt="Banco do Brasil" width="50">
+        <h1>Monitoramento do risco legal</h1>
+    </div>
+    <div class="tabs-container">
+        <div class="tabs">
+            <div data-tab="tab1">Tab 1</div>
+            <div data-tab="tab2">Tab 2</div>
+            <div data-tab="tab3">Tab 3</div>
+        </div>
+        <div id="tab1" class="tab active">
+            <div id="chart1" class="chart-container"></div>
+        </div>
+        <div id="tab2" class="tab">
+            <div id="chart2" class="chart-container"></div>
+        </div>
+        <div id="tab3" class="tab">
+            <div id="chart3" class="chart-container"></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Inicializa o gráfico da primeira aba
+            var chart1 = echarts.init(document.getElementById('chart1'));
+            var option1 = {
+                title: { text: 'Gráfico 1' },
+                xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] },
+                yAxis: { type: 'value' },
+                series: [{ data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120], type: 'bar', itemStyle: { color: '#ff0000' } }]
+            };
+            chart1.setOption(option1);
+
+            // Inicializa os gráficos das outras abas apenas quando forem clicadas
+            var chart2, chart3;
+
+            $('.tabs div').click(function() {
+                var tabId = $(this).data('tab');
+                $('.tab').removeClass('active');
+                $('#' + tabId).addClass('active');
+
+                if (tabId === 'tab2' && !chart2) {
+                    console.log('Inicializando gráfico 2');
+                    chart2 = echarts.init(document.getElementById('chart2'));
+                    var option2 = {
+                        title: { text: 'Gráfico 2' },
+                        xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] },
+                        yAxis: { type: 'value' },
+                        series: [{ data: [15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125], type: 'bar', itemStyle: { color: '#00ff00' } }]
+                    };
+                    chart2.setOption(option2);
+                }
+
+                if (tabId === 'tab3' && !chart3) {
+                    console.log('Inicializando gráfico 3');
+                    chart3 = echarts.init(document.getElementById('chart3'));
+                    var option3 = {
+                        title: { text: 'Gráfico 3' },
+                        xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] },
+                        yAxis: { type: 'value' },
+                        series: [{ data: [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130], type: 'bar', itemStyle: { color: '#0000ff' } }]
+                    };
+                    chart3.setOption(option3);
+                }
+            });
+        });
     </script>
 </body>
 </html>
