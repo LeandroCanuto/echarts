@@ -24,21 +24,26 @@
 
         $(document).ready(function() {
             // Função para inicializar gráficos
-            function initChart(chartId, title) {
+            function initChart(chartId, title, data) {
                 var chart = echarts.init(document.getElementById(chartId));
                 var option = {
                     title: { text: title },
                     xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] },
                     yAxis: { type: 'value' },
-                    series: [{ data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120], type: 'bar', itemStyle: { color: '#0000ff' } }]
+                    series: [{ data: data, type: 'bar', itemStyle: { color: '#0000ff' } }]
                 };
                 chart.setOption(option);
             }
 
+            // Dados diferentes para cada gráfico
+            var data1 = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 2, 120];
+            var data2 = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125];
+            var data3 = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 7];
+
             // Inicializa gráficos em cada aba
-            initChart('chart1', 'Gráfico 1');
-            initChart('chart2', 'Gráfico 2');
-            initChart('chart3', 'Gráfico 3');
+            initChart('chart1', 'Gráfico 1', data1);
+            initChart('chart2', 'Gráfico 2', data2);
+            initChart('chart3', 'Gráfico 3', data3);
         });
     </script>
     <style>
@@ -70,9 +75,9 @@
             border: 2px solid #000;
             padding: 10px;
             border-radius: 10px;
-            margin-top: 80px;
+            margin-top: 80px; /* Adiciona margem superior de 32px */
             width: 80%;
-            margin: 80px auto; /* Adiciona margem superior de 30px */
+            margin: 80px auto; /* Adiciona margem superior de 32px */
             background-color: #ffffff; /* Fundo branco para a área das abas */
         }
         .chart-container {
@@ -87,7 +92,7 @@
 </head>
 <body>
     <div class="header">
-        
+       
         <div class="title">
             <img src="bb.png" alt="BB" width="50">
             <h1>Monitoramento do risco legal</h1>
