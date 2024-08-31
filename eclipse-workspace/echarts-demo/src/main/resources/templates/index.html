@@ -4,13 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoramento do risco legal</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-    <script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $("#tabs").tabs({
+                activate: function(event, ui) {
+                    $(ui.newPanel).find('.chart-container').each(function() {
+                        var chart = echarts.getInstanceByDom(this);
+                        if (chart) {
+                            chart.resize();
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            // Função para inicializar gráficos
+            function initChart(chartId, title) {
+                var chart = echarts.init(document.getElementById(chartId));
+                var option = {
+                    title: { text: title },
+                    xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] },
+                    yAxis: { type: 'value' },
+                    series: [{ data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120], type: 'bar', itemStyle: { color: '#0000ff' } }]
+                };
+                chart.setOption(option);
+            }
+
+            // Inicializa gráficos em cada aba
+            initChart('chart1', 'Gráfico 1');
+            initChart('chart2', 'Gráfico 2');
+            initChart('chart3', 'Gráfico 3');
+        });
+    </script>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
+            background-color: #d3e0e0; /* Azul claro puxado para o cinza */
         }
         .header {
             background-color: #0057A0;
@@ -26,104 +62,52 @@
         .header img {
             margin-right: 10px;
         }
+        .header .title {
+            display: flex;
+            align-items: center;
+        }
         .tabs-container {
             border: 2px solid #000;
             padding: 10px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 80px;
             width: 80%;
-            margin: 0 auto;
-        }
-        .tabs {
-            display: flex;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-        .tabs div {
-            padding: 10px;
-            border: 1px solid #ccc;
-            margin-right: 5px;
-            border-radius: 10px;
-        }
-        .tab {
-            display: none;
-        }
-        .tab.active {
-            display: block;
+            margin: 80px auto; /* Adiciona margem superior de 30px */
+            background-color: #ffffff; /* Fundo branco para a área das abas */
         }
         .chart-container {
             width: 100%;
             height: 400px;
+            background-color: #ffffff; /* Fundo branco para a div do gráfico */
+            border-radius: 10px; /* Adiciona bordas arredondadas */
+            padding: 10px; /* Adiciona padding */
+            box-sizing: border-box; /* Garante que o padding não faça o conteúdo ultrapassar a div */
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Banco_do_Brasil_logo.svg/1200px-Banco_do_Brasil_logo.svg.png" alt="Banco do Brasil" width="50">
-        <h1>Monitoramento do risco legal</h1>
-    </div>
-    <div class="tabs-container">
-        <div class="tabs">
-            <div data-tab="tab1">Tab 1</div>
-            <div data-tab="tab2">Tab 2</div>
-            <div data-tab="tab3">Tab 3</div>
+        
+        <div class="title">
+            <img src="bb.png" alt="BB" width="50">
+            <h1>Monitoramento do risco legal</h1>
         </div>
-        <div id="tab1" class="tab active">
+    </div>
+    <div id="tabs" class="tabs-container">
+        <ul>
+            <li><a href="#tabs-1">Tab 1</a></li>
+            <li><a href="#tabs-2">Tab 2</a></li>
+            <li><a href="#tabs-3">Tab 3</a></li>
+        </ul>
+        <div id="tabs-1">
             <div id="chart1" class="chart-container"></div>
         </div>
-        <div id="tab2" class="tab">
+        <div id="tabs-2">
             <div id="chart2" class="chart-container"></div>
         </div>
-        <div id="tab3" class="tab">
+        <div id="tabs-3">
             <div id="chart3" class="chart-container"></div>
         </div>
     </div>
-
-    <script>
-        $(document).ready(function() {
-            // Inicializa o gráfico da primeira aba
-            var chart1 = echarts.init(document.getElementById('chart1'));
-            var option1 = {
-                title: { text: 'Gráfico 1' },
-                xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] },
-                yAxis: { type: 'value' },
-                series: [{ data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120], type: 'bar', itemStyle: { color: '#ff0000' } }]
-            };
-            chart1.setOption(option1);
-
-            // Inicializa os gráficos das outras abas apenas quando forem clicadas
-            var chart2, chart3;
-
-            $('.tabs div').click(function() {
-                var tabId = $(this).data('tab');
-                $('.tab').removeClass('active');
-                $('#' + tabId).addClass('active');
-
-                if (tabId === 'tab2' && !chart2) {
-                    console.log('Inicializando gráfico 2');
-                    chart2 = echarts.init(document.getElementById('chart2'));
-                    var option2 = {
-                        title: { text: 'Gráfico 2' },
-                        xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] },
-                        yAxis: { type: 'value' },
-                        series: [{ data: [15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125], type: 'bar', itemStyle: { color: '#00ff00' } }]
-                    };
-                    chart2.setOption(option2);
-                }
-
-                if (tabId === 'tab3' && !chart3) {
-                    console.log('Inicializando gráfico 3');
-                    chart3 = echarts.init(document.getElementById('chart3'));
-                    var option3 = {
-                        title: { text: 'Gráfico 3' },
-                        xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] },
-                        yAxis: { type: 'value' },
-                        series: [{ data: [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130], type: 'bar', itemStyle: { color: '#0000ff' } }]
-                    };
-                    chart3.setOption(option3);
-                }
-            });
-        });
-    </script>
 </body>
 </html>
