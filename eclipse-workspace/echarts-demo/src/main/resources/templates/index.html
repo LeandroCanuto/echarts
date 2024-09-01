@@ -13,7 +13,7 @@
             $("#tabs").tabs({
                 activate: function(event, ui) {
                     $(ui.newPanel).find('.chart-container').each(function() {
-                        var chart = window.myBarChart; // Obtenha o gráfico existente
+                        var chart = window.myBarChart;
                         if (chart) {
                             chart.resize();
                         }
@@ -24,21 +24,19 @@
             function initChart(chartId, data) {
                 var ctx = document.getElementById(chartId).getContext('2d');
                 
-                // Verifica se o gráfico já foi inicializado e o remove antes de criar um novo
                 if (window.myBarChart) {
                     window.myBarChart.destroy();
                 }
 
-                // Cria o gráfico de barras
                 window.myBarChart = new Chart(ctx, {
-                    type: 'bar', // Tipo de gráfico: barras
+                    type: 'bar',
                     data: {
-                        labels: Object.keys(data), // Eixo X: meses
+                        labels: Object.keys(data),
                         datasets: [{
                             label: 'Contratações',
-                            data: Object.values(data), // Eixo Y: valores
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Cor de fundo das barras
-                            borderColor: 'rgba(75, 192, 192, 1)', // Cor da borda das barras
+                            data: Object.values(data),
+                            backgroundColor: 'rgba(0, 87, 160, 0.2)',
+                            borderColor: 'rgba(0, 87, 160, 1)',
                             borderWidth: 1
                         }]
                     },
@@ -56,10 +54,8 @@
                 });
             }
 
-            // Dados dinâmicos do backend, fornecidos pelo Thymeleaf
             var chartData = /*[[${chartData}]]*/ '{}';
 
-            // Verifique se os dados são válidos antes de tentar analisá-los
             try {
                 var data = JSON.parse(chartData);
                 console.log("Dados do Gráfico:", data);
@@ -89,6 +85,7 @@
         }
         .header img {
             margin-right: 10px;
+            height: calc(1em + 15px); /* Imagem 15px maior que o tamanho do texto */
         }
         .header .title {
             display: flex;
@@ -104,12 +101,13 @@
             background-color: #ffffff;
         }
         .chart-container {
-            width: 100%;
-            height: 400px;
+            width: 60%; /* Reduzido para metade do tamanho original */
+            height: 300px; /* Também reduzido */
             background-color: #ffffff;
             border-radius: 10px;
             padding: 10px;
             box-sizing: border-box;
+            margin: 0 auto; /* Centralizar o gráfico */
         }
         .table-container {
             width: 80%;
@@ -136,7 +134,7 @@
 <body>
     <div class="header">
         <div class="title">
-            <img src="logo.png" alt="Logo">
+            <img src="bb.png" alt="Logo">
             <h1>Monitoramento do Risco Legal</h1>
         </div>
     </div>
