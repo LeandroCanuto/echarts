@@ -3,47 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoramento do risco legal</title>
+    <title>Monitoramento do Risco Legal</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
         $(function() {
             $("#tabs").tabs({
                 activate: function(event, ui) {
                     $(ui.newPanel).find('.chart-container').each(function() {
-                        var chart = echarts.getInstanceByDom(this);
+                        var chart = window.myBarChart; // Obtenha o gráfico existente
                         if (chart) {
                             chart.resize();
                         }
                     });
                 }
             });
-        });
 
-        $(document).ready(function() {
-            // Função para inicializar gráficos
-            function initChart(chartId, title, data) {
-                var chart = echarts.init(document.getElementById(chartId));
-                var option = {
-                    title: { text: title },
-                    xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] },
-                    yAxis: { type: 'value' },
-                    series: [{ data: data, type: 'bar', itemStyle: { color: '#0000ff' } }]
-                };
-                chart.setOption(option);
+            function initChart(chartId, data) {
+                var ctx = document.getElementById(chartId).getContext('2d');
+                
+                // Verifica se o gráfico já foi inicializado e o remove antes de criar um novo
+                if (window.myBarChart) {
+                    window.myBarChart.destroy();
+                }
+
+                // Cria o gráfico de barras
+                window.myBarChart = new Chart(ctx, {
+                    type: 'bar', // Tipo de gráfico: barras
+                    data: {
+                        labels: Object.keys(data), // Eixo X: meses
+                        datasets: [{
+                            label: 'Contratações',
+                            data: Object.values(data), // Eixo Y: valores
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Cor de fundo das barras
+                            borderColor: 'rgba(75, 192, 192, 1)', // Cor da borda das barras
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
             }
 
-            // Dados diferentes para cada gráfico
-            var data1 = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 2, 120];
-            var data2 = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125];
-            var data3 = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 7];
+            // Dados dinâmicos do backend, fornecidos pelo Thymeleaf
+            var chartData = /*[[${chartData}]]*/ '{}';
 
-            // Inicializa gráficos em cada aba
-            initChart('chart1', 'Gráfico 1', data1);
-            initChart('chart2', 'Gráfico 2', data2);
-            initChart('chart3', 'Gráfico 3', data3);
+            // Verifique se os dados são válidos antes de tentar analisá-los
+            try {
+                var data = JSON.parse(chartData);
+                console.log("Dados do Gráfico:", data);
+                initChart('myChart', data);
+            } catch (e) {
+                console.error("Erro ao analisar chartData:", e);
+            }
         });
     </script>
     <style>
@@ -51,7 +74,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #d3e0e0; /* Azul claro puxado para o cinza */
+            background-color: #d3e0e0;
         }
         .header {
             background-color: #0057A0;
@@ -75,43 +98,64 @@
             border: 2px solid #000;
             padding: 10px;
             border-radius: 10px;
-            margin-top: 80px; /* Adiciona margem superior de 32px */
+            margin-top: 80px;
             width: 80%;
-            margin: 80px auto; /* Adiciona margem superior de 32px */
-            background-color: #ffffff; /* Fundo branco para a área das abas */
+            margin: 80px auto;
+            background-color: #ffffff;
         }
         .chart-container {
             width: 100%;
             height: 400px;
-            background-color: #ffffff; /* Fundo branco para a div do gráfico */
-            border-radius: 10px; /* Adiciona bordas arredondadas */
-            padding: 10px; /* Adiciona padding */
-            box-sizing: border-box; /* Garante que o padding não faça o conteúdo ultrapassar a div */
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .table-container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
     <div class="header">
-       
         <div class="title">
-            <img src="bb.png" alt="BB" width="50">
-            <h1>Monitoramento do risco legal</h1>
+            <img src="logo.png" alt="Logo">
+            <h1>Monitoramento do Risco Legal</h1>
         </div>
     </div>
-    <div id="tabs" class="tabs-container">
-        <ul>
-            <li><a href="#tabs-1">Tab 1</a></li>
-            <li><a href="#tabs-2">Tab 2</a></li>
-            <li><a href="#tabs-3">Tab 3</a></li>
-        </ul>
-        <div id="tabs-1">
-            <div id="chart1" class="chart-container"></div>
-        </div>
-        <div id="tabs-2">
-            <div id="chart2" class="chart-container"></div>
-        </div>
-        <div id="tabs-3">
-            <div id="chart3" class="chart-container"></div>
+    <div class="tabs-container">
+        <div id="tabs">
+            <ul>
+                <li><a href="#tab1">Gráfico 1</a></li>
+                <li><a href="#tab2">Gráfico 2</a></li>
+                <li><a href="#tab3">Gráfico 3</a></li>
+            </ul>
+            <div id="tab1">
+                <canvas id="myChart" class="chart-container"></canvas>
+            </div>
+            <div id="tab2">
+                <canvas id="myChart2" class="chart-container"></canvas>
+            </div>
+            <div id="tab3">
+                <canvas id="myChart3" class="chart-container"></canvas>
+            </div>
         </div>
     </div>
 </body>
